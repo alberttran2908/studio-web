@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>not bad — an AI game studio</title>
-<meta name="description" content="not bad is an AI game studio. Many games, unreasonable polish. Our games are not unfun — play one right here.">
+<meta name="description" content="not bad is an AI game studio. Doing games, unreasonable polish. Our games are not unfun — play one right here.">
 <meta property="og:title" content="not bad — an AI game studio">
 <meta property="og:description" content="Our business card is playable. Sort it out.">
 <meta property="og:type" content="website">
@@ -146,7 +146,7 @@
 <section id="hero">
   <div class="tag rv">AN AI GAME STUDIO</div>
   <div id="typed" style="margin-top:.6em"><span id="typedTxt"></span><span id="cursorBlock"></span></div>
-  <div class="heroLine rv">many games · unreasonable polish<br>our games are <span class="r">not unfun</span></div>
+  <div class="heroLine rv">doing games · unreasonable polish<br>our games are <span class="r">not unfun</span></div>
   <div id="scrollHint">▼</div>
 </section>
 
@@ -172,7 +172,7 @@
 <section id="manifesto">
   <div class="mline rv">quiet games<br>for <span class="r">loud days</span>.</div>
   <div class="mline rv" style="font-size:clamp(18px,3vw,34px);color:var(--dim);font-weight:700">one thumb · zero tutorials · nothing yelling at you</div>
-  <p class="sub rv msub">We are a tiny studio that makes games and then polishes them for an <b>unreasonable</b> amount of time. If a move does not feel like a <span class="r">click in your spine</span>, it does not ship.</p>
+  <p class="sub rv msub">We make games, <b>technically</b>. What we really build is a small good memory for a stranger <span class="r">somewhere in the world</span> — and if it is not worth remembering, it does not ship.</p>
 </section>
 
 <!-- QUALITY -->
@@ -187,8 +187,10 @@
   <div class="tag rv">NOW LOADING</div>
   <h2 class="rv" style="margin-top:.6em">the games.</h2>
   <div class="shelf rv">
+    <a class="cart live" href="https://apps.apple.com/sg/app/sortino-domino-wood-puzzle/id6787122842" target="_blank" rel="noopener">
+      <div class="q">S</div><span>SORTINO</span><span class="mini">DOMINO WOOD PUZZLE · APP STORE ↗</span>
+    </a>
     <div class="cart dev"><div class="q">▮</div><span>IN DEVELOPMENT</span></div>
-    <div class="cart"><div class="q">?</div><span>COMING SOON</span></div>
     <div class="cart"><div class="q">?</div><span>COMING SOON</span></div>
   </div>
   <p class="sub rv" style="margin-top:4vh">Want to know first? <a class="btn red" style="margin-left:.6em" href="mailto:hello@notbad.games">$ say hello</a></p>
@@ -322,6 +324,23 @@ function fly(fromRect,toRect,t,cb,delay){
   }
   if(delay) setTimeout(go,delay); else go();
 }
+/* viên đáy: bị cột ép TRƯỢT XUỐNG cùng nhịp dồn cột (0.28s) rồi mới bật ra bay về tay */
+function flyBottom(fromRect,toRect,t,step,cb){
+  const c=document.createElement("div");
+  c.className=tileClass(t)+" fly"; c.innerHTML=tileHTML(t);
+  c.style.width=fromRect.width+"px"; c.style.height=fromRect.height+"px";
+  c.style.left=fromRect.left+"px"; c.style.top=fromRect.top+"px";
+  document.body.appendChild(c);
+  if(REDUCED){ c.remove(); cb&&cb(); return; }
+  const dx=toRect.left-fromRect.left, dy=toRect.top-fromRect.top;
+  c.animate([{transform:"translate(0,0)"},{transform:"translate(0,"+step+"px)"}],
+    {duration:280,easing:"cubic-bezier(.3,.8,.3,1)",fill:"forwards"}).onfinish=function(){
+    c.animate([{transform:"translate(0,"+step+"px)"},
+               {transform:"translate("+dx*.5+"px,"+(dy*.5-40)+"px) scale(1.06)"},
+               {transform:"translate("+dx+"px,"+dy+"px) scale(1)"}],
+      {duration:330,easing:"cubic-bezier(.3,.7,.3,1)"}).onfinish=function(){ c.remove(); cb&&cb(); };
+  };
+}
 
 /* đẩy cả cột xuống 1 nấc trong 0.3s (FLIP: sau render mọi viên đã ở vị trí mới,
    cho các viên cũ chạy từ -step về 0; viên đỉnh mới dùng anim drop riêng) */
@@ -390,8 +409,8 @@ function move(ci){
   fly(handRect,topRect,flyIn,function(){
     render(); handEl.style.visibility="hidden";   // không dùng .drop — viên mới đi cùng nhịp dồn cột
     pushDown(ci);
-    // viên đáy đứng tại chỗ 0.22s (đang bị cột đè xuống) rồi mới bật ra bay về tay
-    fly(botRect,handRect,wasHid?{c:"?",hid:true}:hand,function(){
+    // viên đáy trượt xuống CÙNG nhịp dồn cột rồi bật ra bay về tay
+    flyBottom(botRect,handRect,wasHid?{c:"?",hid:true}:hand,stepPx,function(){
       handEl.style.visibility="";
       if(wasHid){ hand.hid=false; render(); handEl.classList.add("hid","reveal");
         handEl.innerHTML=tileHTML({hid:true}); // vỏ để tách
@@ -400,7 +419,7 @@ function move(ci){
         // giữ vỏ hé màu thật phía dưới
         handEl.className="tile c"+hand.c+" hid reveal";
       } else { sPop(); render(); finish(); }
-    },220);
+    });
   });
   function finish(){
     busy=false;
