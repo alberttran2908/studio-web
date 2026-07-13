@@ -24,7 +24,8 @@
   ::selection{background:var(--red);color:white}
   #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:30}
 
-  section{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14vh 6vw;position:relative}
+  section{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7vh 6vw;position:relative}
+  #hero{min-height:100vh} /* riêng title screen giữ full màn */
   .tag{display:inline-block;color:var(--red);border:2px solid var(--red);padding:.3em .9em;border-radius:.6em;font-weight:700;font-size:clamp(11px,1.3vw,14px);letter-spacing:.18em}
   h1,h2{font-weight:800;line-height:1.03;letter-spacing:-.02em;text-align:center}
   h2{font-size:clamp(34px,7vw,96px)}
@@ -339,10 +340,10 @@ function flyBottom(fromRect,toRect,t,step,cb){
   const dx=toRect.left-fromRect.left, dy=toRect.top-fromRect.top;
   c.animate([{transform:"translate(0,0)"},{transform:"translate(0,"+step+"px)"}],
     {duration:280,easing:"cubic-bezier(.3,.8,.3,1)",fill:"forwards"}).onfinish=function(){
-    c.animate([{transform:"translate(0,"+step+"px)"},
-               {transform:"translate("+dx*.5+"px,"+(dy*.5-40)+"px) scale(1.06)"},
+    // trượt THẲNG về tay, không nhún lên (đi tiếp theo đà bị ép xuống)
+    c.animate([{transform:"translate(0,"+step+"px) scale(1)"},
                {transform:"translate("+dx+"px,"+dy+"px) scale(1)"}],
-      {duration:330,easing:"cubic-bezier(.3,.7,.3,1)"}).onfinish=function(){ c.remove(); cb&&cb(); };
+      {duration:300,easing:"cubic-bezier(.35,.75,.25,1)"}).onfinish=function(){ c.remove(); cb&&cb(); };
   };
 }
 
