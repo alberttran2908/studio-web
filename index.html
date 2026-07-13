@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>not bad — a game studio</title>
-<meta name="description" content="not bad is an independent game studio. Our games are not unfun. Scroll to play.">
-<meta property="og:title" content="not bad — a game studio">
-<meta property="og:description" content="This website is a game. Scroll to play it.">
+<title>not bad — an AI game studio</title>
+<meta name="description" content="not bad is an AI-first game studio. Many games, unreasonable polish. Our games are not unfun — play one right here.">
+<meta property="og:title" content="not bad — an AI game studio">
+<meta property="og:description" content="Our business card is playable. Sort it out.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23E0312A'/%3E%3Crect x='22' y='18' width='20' height='28' rx='4' fill='white'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,323 +14,411 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --red:#E0312A; --red-d:#b32017; --bg:#0b0b0d; --ink:#f4f2ee; --dim:#8a8a92;
+    --red:#E0312A; --red-d:#b32017; --grn:#3fbf62; --wht:#eceae5; --bg:#0b0b0d; --panel:#121217; --line:#26262b;
+    --ink:#f4f2ee; --dim:#8a8a92; --gold:#f0b429;
     --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --tile:clamp(44px,8vw,66px);
   }
-  *{margin:0;padding:0;box-sizing:border-box}
-  html{scroll-behavior:auto}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   body{background:var(--bg);color:var(--ink);font-family:var(--mono);overflow-x:hidden}
   ::selection{background:var(--red);color:white}
+  #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:30}
 
-  /* ── scroll track: chiều cao = độ dài "màn chơi" ── */
-  #track{height:1000vh}
-
-  /* ── sân khấu cố định ── */
-  #stage{position:fixed;inset:0;overflow:hidden}
-  #fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6}
-
-  /* ── thế giới cuộn ngang ── */
-  #world{position:absolute;top:0;left:0;height:100%;will-change:transform}
-  .zone{position:absolute;top:0;height:100%;}
-  .zone-inner{position:absolute;top:0;left:0;right:0;bottom:26vh;display:flex;flex-direction:column;justify-content:center;padding:0 6vw}
-  .lvl-tag{display:inline-block;color:var(--red);border:2px solid var(--red);padding:.3em .8em;border-radius:.6em;font-weight:700;font-size:clamp(11px,1.4vw,14px);letter-spacing:.18em;margin-bottom:1.2em;width:max-content}
-  h1,h2{font-weight:800;line-height:1.02;letter-spacing:-.02em}
+  section{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14vh 6vw;position:relative}
+  .tag{display:inline-block;color:var(--red);border:2px solid var(--red);padding:.3em .9em;border-radius:.6em;font-weight:700;font-size:clamp(11px,1.3vw,14px);letter-spacing:.18em}
+  h1,h2{font-weight:800;line-height:1.03;letter-spacing:-.02em;text-align:center}
   h2{font-size:clamp(34px,7vw,96px)}
-  .sub{color:var(--dim);font-size:clamp(13px,1.6vw,18px);margin-top:1.4em;max-width:34em;line-height:1.7}
-  .sub b{color:var(--ink)}
-  .sub .r{color:var(--red);font-weight:700}
+  .sub{color:var(--dim);font-size:clamp(13px,1.6vw,17px);line-height:1.7;text-align:center;max-width:38em}
+  .sub b{color:var(--ink)} .sub .r{color:var(--red);font-weight:700}
 
-  /* ── mặt đất ── */
-  #ground{position:absolute;left:0;right:0;bottom:0;height:26vh;z-index:3;
-    border-top:3px solid #26262b;
-    background:
-      repeating-linear-gradient(90deg,transparent 0 11vw,#1a1a1f 11vw calc(11vw + 2px)),
-      linear-gradient(#121216,#0b0b0d 70%);}
+  .rv{opacity:0;transform:translateY(34px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.9,.3,1)}
+  .rv.in{opacity:1;transform:none}
 
-  /* ── nhân vật: con trỏ đỏ ── */
-  #char{position:absolute;left:22vw;bottom:26vh;width:min(9vw,64px);height:min(13vw,92px);z-index:5;will-change:transform}
-  #charBody{width:100%;height:100%;background:var(--red);border-radius:14%/10%;position:relative;
-    box-shadow:0 0 0 3px rgba(0,0,0,.35) inset, 0 10px 24px rgba(224,49,42,.35);}
-  .eye{position:absolute;top:22%;width:16%;height:14%;background:white;border-radius:50%;animation:blink 4.2s infinite}
-  .eye.l{left:24%}.eye.r{right:24%}
-  @keyframes blink{0%,92%,100%{transform:scaleY(1)}95%,97%{transform:scaleY(.08)}}
-  #shadow{position:absolute;left:50%;bottom:-2.2vh;width:120%;height:2vh;background:rgba(0,0,0,.55);border-radius:50%;transform:translateX(-50%)}
-
-  /* ── HUD ── */
-  .hud{position:absolute;z-index:8;font-weight:700;letter-spacing:.12em}
-  #score{top:3.2vh;left:4vw;font-size:clamp(14px,2vw,20px)}
-  #score b{color:var(--red)}
-  #lvlHud{top:3.2vh;right:4vw;font-size:clamp(11px,1.5vw,14px);color:var(--dim)}
-  #hint{bottom:3.4vh;left:50%;transform:translateX(-50%);color:var(--dim);font-size:clamp(11px,1.4vw,13px);letter-spacing:.22em;animation:pulse 1.6s ease-in-out infinite}
-  @keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
-
-  /* ── title screen ── */
+  /* ── HERO ── */
   #typed{font-size:clamp(52px,12vw,170px);font-weight:800;letter-spacing:-.03em;white-space:nowrap}
   #cursorBlock{display:inline-block;width:.55em;height:.92em;background:var(--red);border-radius:.08em;vertical-align:baseline;transform:translateY(.1em);animation:curBlink 1s steps(1) infinite}
   @keyframes curBlink{0%,60%{opacity:1}61%,100%{opacity:.15}}
-  .press{margin-top:2.2em;color:var(--dim);letter-spacing:.3em;font-size:clamp(11px,1.5vw,14px)}
-  .press .r{color:var(--red)}
+  .heroLine{margin-top:2em;color:var(--dim);letter-spacing:.08em;font-size:clamp(12px,1.7vw,17px);text-align:center;line-height:1.8}
+  .heroLine .r{color:var(--red);font-weight:700}
+  #scrollHint{position:absolute;bottom:4vh;left:50%;transform:translateX(-50%);color:var(--dim);font-size:12px;letter-spacing:.3em;animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
 
-  /* ── props ── */
-  .prop{position:absolute;z-index:2}
-  .chip{background:#141419;border:2px solid #2a2a31;border-radius:12px;color:var(--dim);font-weight:700;
-    padding:.55em .9em;font-size:clamp(11px,1.6vw,16px);box-shadow:0 8px 18px rgba(0,0,0,.5)}
-  .chip.red{border-color:var(--red);color:var(--red)}
-  .star{width:14px;height:14px;background:white;clip-path:polygon(50% 0,63% 37%,100% 50%,63% 63%,50% 100%,37% 63%,0 50%,37% 37%);opacity:.9;animation:tw 2.4s ease-in-out infinite}
-  @keyframes tw{0%,100%{transform:scale(.6);opacity:.4}50%{transform:scale(1.15);opacity:1}}
-  .bug{width:38px;height:26px;background:#2c2c33;border-radius:50% 50% 45% 45%;position:relative}
-  .bug:before{content:"";position:absolute;inset:auto 6px -6px 6px;height:8px;
-    background:repeating-linear-gradient(90deg,#2c2c33 0 4px,transparent 4px 9px);}
-  .bug.dead{transform:rotate(180deg) translateY(8px);opacity:.5}
-  .bigbtn{width:clamp(150px,22vw,300px);padding:1em 0;text-align:center;font-weight:800;font-size:clamp(15px,2.4vw,26px);
-    color:white;background:linear-gradient(#ff5b52,var(--red));border-radius:18px;border-bottom:10px solid var(--red-d);
-    transition:transform .18s,border-bottom-width .18s}
-  .bigbtn.pressed{transform:translateY(8px);border-bottom-width:2px}
+  /* ── PUZZLE ── */
+  #puzzleWrap{margin-top:4vh;display:flex;flex-direction:column;align-items:center;gap:2.6vh}
+  #hud{display:flex;gap:2.5em;font-weight:700;letter-spacing:.15em;font-size:clamp(12px,1.6vw,16px)}
+  #hud b{color:var(--grn)} #hud.low b{color:var(--red);animation:pulse 1s infinite}
+  #board{display:flex;gap:clamp(12px,2.4vw,24px)}
+  .col{width:calc(var(--tile) + 14px);flex:none;display:flex;flex-direction:column;gap:6px;padding:8px 5px;cursor:pointer;position:relative;
+    border:2px solid var(--line);border-top:none;border-radius:0 0 14px 14px;transition:border-color .2s}
+  /* inner cột = 14px (padding 5×2 + border 2×2) → tile trong cột = đúng var(--tile), không bị bóp */
+  .col:hover{border-color:#3a3a42}
+  .col.done{border-color:var(--gold)}
+  .col.done:after{content:"✓";position:absolute;top:-1.7em;left:50%;transform:translateX(-50%);color:var(--gold);font-weight:800}
+  .col.locked{pointer-events:none}
 
-  /* ── games / bonus ── */
-  .shelf{display:flex;gap:2.2vw;margin-top:2.4em;flex-wrap:wrap}
+  .tile{width:100%;height:var(--tile);border-radius:12px;position:relative;flex:none;
+    box-shadow:0 4px 10px rgba(0,0,0,.45), inset 0 -4px 0 rgba(0,0,0,.22)}
+  .tile.drop{animation:dropIn .3s cubic-bezier(.2,1.4,.4,1)}
+  @keyframes dropIn{0%{transform:translateY(-30px) scaleY(1.12)}70%{transform:translateY(2px) scaleY(.94)}100%{transform:none}}
+  .tile:before,.tile:after{content:"";position:absolute;top:26%;width:14%;height:16%;background:rgba(255,255,255,.92);border-radius:50%}
+  .tile:before{left:26%} .tile:after{right:26%}
+  .tile.cG{background:var(--grn)}
+  .tile.cR{background:var(--red)}
+  .tile.cR:before,.tile.cR:after{animation:blink 3.8s infinite}
+  @keyframes blink{0%,92%,100%{transform:scaleY(1)}95%,97%{transform:scaleY(.08)}}
+  .tile.cW{background:var(--wht)}
+  .tile.cW:before,.tile.cW:after{background:#3a3a42}
+  .tile.cX{background:#1c1c22;border:2px solid #2e2e36}
+  .tile.cX:before,.tile.cX:after{display:none}
+  .tile.cX .star{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#4a4a55;font-weight:800;font-size:1.1em}
+
+  /* viên ẩn: vỏ xám 2 nửa */
+  .tile.hid:before,.tile.hid:after{display:none}
+  .shellL,.shellR{position:absolute;top:0;bottom:0;width:52%;background:linear-gradient(#63636e,#4a4a55);z-index:2}
+  .shellL{left:0;border-radius:12px 0 0 12px}
+  .shellR{right:0;border-radius:0 12px 12px 0}
+  .shellQ{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;color:#c9c9d2;font-weight:800;font-size:1.05em}
+  .tile.reveal .shellL{animation:shL .5s ease forwards}
+  .tile.reveal .shellR{animation:shR .5s ease forwards}
+  .tile.reveal .shellQ{animation:shQ .3s ease forwards}
+  @keyframes shL{to{transform:translateX(-130%) rotate(-16deg);opacity:0}}
+  @keyframes shR{to{transform:translateX(130%) rotate(16deg);opacity:0}}
+  @keyframes shQ{to{opacity:0}}
+
+  /* tay cầm */
+  #handWrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+  #handSlot{width:calc(var(--tile) + 20px);padding:8px;border:2px dashed #3a3a42;border-radius:16px}
+  /* inner slot = 20px (padding 8×2 + border 2×2) → tile trên tay = var(--tile), khớp tile trong cột */
+  #handLabel{color:var(--dim);font-size:11px;letter-spacing:.3em;font-weight:700}
+  #handTile.pop{animation:handPop .25s cubic-bezier(.2,1.5,.4,1)}
+  @keyframes handPop{0%{transform:scale(.6)}100%{transform:scale(1)}}
+
+  /* viên bay (clone) */
+  .fly{position:fixed;z-index:50;pointer-events:none;margin:0}
+
+  #pzBtns{display:flex;gap:12px}
+  .btn{font-family:var(--mono);font-weight:700;font-size:clamp(12px,1.5vw,15px);padding:.8em 1.4em;border-radius:12px;cursor:pointer;border:none;text-decoration:none;display:inline-block;letter-spacing:.06em}
+  .btn.red{background:var(--red);color:white;border-bottom:5px solid var(--red-d)}
+  .btn.ghost{background:transparent;color:var(--dim);border:2px solid var(--line)}
+  .btn:active{transform:translateY(2px)}
+
+  /* ── MANIFESTO ── */
+  .mline{font-size:clamp(30px,6.5vw,84px);font-weight:800;letter-spacing:-.02em;line-height:1.15;text-align:center}
+  .mline .r{color:var(--red)}
+  .msub{margin-top:4em}
+
+  /* ── GAMES ── */
+  .shelf{display:flex;gap:2.2vw;margin-top:5vh;flex-wrap:wrap;justify-content:center}
   .cart{width:clamp(150px,19vw,240px);aspect-ratio:3/4;border-radius:16px;border:2px dashed #33333b;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9em;color:var(--dim)}
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9em;color:var(--dim);transition:transform .25s}
+  .cart:hover{transform:translateY(-8px) rotate(-1.5deg)}
   .cart .q{font-size:clamp(30px,4.5vw,54px);font-weight:800;color:#3c3c45}
   .cart span{font-size:clamp(10px,1.3vw,13px);letter-spacing:.2em}
   .cart.dev{border-style:solid;border-color:var(--red)}
-  .cart.dev .q{color:var(--red)}
+  .cart.dev .q{color:var(--red);animation:curBlink 1s steps(1) infinite}
 
-  /* ── win popup ── */
-  #win{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;
+  /* ── POPUP ── */
+  #win{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;
     background:rgba(5,5,8,.78);opacity:0;pointer-events:none;transition:opacity .5s}
   #win.show{opacity:1;pointer-events:auto}
-  #winCard{background:#121217;border:2px solid #2a2a31;border-radius:22px;padding:clamp(24px,4vw,48px);
+  #winCard{background:var(--panel);border:2px solid #2a2a31;border-radius:22px;padding:clamp(24px,4vw,48px);
     text-align:center;max-width:min(92vw,520px);transform:scale(.8);transition:transform .5s cubic-bezier(.2,1.6,.4,1)}
   #win.show #winCard{transform:scale(1)}
-  #winCard .lvl-tag{margin:0 auto 1em}
+  #winCard .tag{margin-bottom:1em}
   #winCard h3{font-size:clamp(26px,5vw,44px);font-weight:800;margin-bottom:.35em}
   #winCard p{color:var(--dim);line-height:1.7;font-size:clamp(12px,1.6vw,15px)}
-  #finalScore{color:var(--red);font-weight:800}
   .btnrow{display:flex;gap:12px;justify-content:center;margin-top:1.6em;flex-wrap:wrap}
-  .btn{font-family:var(--mono);font-weight:700;font-size:clamp(12px,1.6vw,15px);padding:.85em 1.5em;border-radius:12px;cursor:pointer;border:none;text-decoration:none;display:inline-block}
-  .btn.red{background:var(--red);color:white;border-bottom:5px solid var(--red-d)}
-  .btn.ghost{background:transparent;color:var(--dim);border:2px solid #2a2a31}
-  .btn:active{transform:translateY(2px)}
 
-  footer{position:fixed;bottom:1vh;right:2vw;z-index:8;color:#3c3c45;font-size:11px;letter-spacing:.1em}
+  footer{padding:6vh 6vw;text-align:center;color:#3c3c45;font-size:12px;letter-spacing:.12em;line-height:2}
+  footer a{color:var(--dim);text-decoration:none;border-bottom:1px solid var(--line)}
 
   @media (prefers-reduced-motion: reduce){
-    #hint,.star,.eye,#cursorBlock{animation:none}
-  }
-  @media (max-width:600px){
-    #char{left:16vw}
-    .zone-inner{padding:0 8vw}
+    #cursorBlock,.tile.cR:before,.tile.cR:after,#scrollHint,.cart.dev .q,#hud.low b{animation:none}
+    .rv{transition:none;opacity:1;transform:none}
+    .tile.drop,#handTile.pop{animation:none}
   }
 </style>
 </head>
 <body>
-<div id="track"></div>
+<canvas id="fx"></canvas>
 
-<div id="stage">
-  <div id="world"></div>
+<!-- HERO -->
+<section id="hero">
+  <div class="tag rv">AN AI GAME STUDIO</div>
+  <div id="typed" style="margin-top:.6em"><span id="typedTxt"></span><span id="cursorBlock"></span></div>
+  <div class="heroLine rv">many games · AI speed · human taste<br>our games are <span class="r">not unfun</span></div>
+  <div id="scrollHint">▼</div>
+</section>
 
-  <div id="ground"></div>
-
-  <div id="char">
-    <div id="charBody"><div class="eye l"></div><div class="eye r"></div></div>
-    <div id="shadow"></div>
+<!-- PUZZLE -->
+<section id="play">
+  <div class="tag rv">OUR BUSINESS CARD IS PLAYABLE</div>
+  <h2 class="rv" style="margin-top:.6em">sort it out.</h2>
+  <p class="sub rv" style="margin-top:1.2em">Tap a column — your block lands on <b>top</b>, the <b>bottom</b> one pops back to your hand.<br>One color per column — the ★ ends up in your hand. <span class="r">17 moves</span>. That is the whole tutorial — as it should be.</p>
+  <div id="puzzleWrap" class="rv">
+    <div id="hud"><span>MOVES LEFT <b id="mv">17</b></span></div>
+    <div id="board"></div>
+    <div id="handWrap">
+      <div id="handSlot"><div id="handTile" class="tile"></div></div>
+      <div id="handLabel">YOUR HAND</div>
+    </div>
+    <div id="pzBtns">
+      <button class="btn ghost" id="retryBtn">↺ retry</button>
+    </div>
   </div>
+</section>
 
-  <canvas id="fx"></canvas>
+<!-- MANIFESTO -->
+<section id="manifesto">
+  <div class="mline rv">AI does the heavy lifting.<br>taste does the <span class="r">shipping</span>.</div>
+  <div class="mline rv" style="font-size:clamp(18px,3vw,34px);color:var(--dim);font-weight:700">one thumb · zero tutorials · nothing yelling at you</div>
+  <p class="sub rv msub">We are an AI-first studio shipping games of every shape and size. The machines make us <b>fast</b> — they do not make the calls. If a move does not feel like a <span class="r">click in your spine</span>, it does not ship.</p>
+</section>
 
-  <div class="hud" id="score">SCORE <b>000000</b></div>
-  <div class="hud" id="lvlHud">TITLE SCREEN</div>
-  <div class="hud" id="hint">▼ SCROLL TO PLAY ▼</div>
-  <footer>© <span id="yr"></span> not bad — our games are not unfun</footer>
-</div>
+<!-- GAMES -->
+<section id="games">
+  <div class="tag rv">NOW LOADING</div>
+  <h2 class="rv" style="margin-top:.6em">the games.</h2>
+  <div class="shelf rv">
+    <div class="cart dev"><div class="q">▮</div><span>IN DEVELOPMENT</span></div>
+    <div class="cart"><div class="q">?</div><span>COMING SOON</span></div>
+    <div class="cart"><div class="q">?</div><span>COMING SOON</span></div>
+  </div>
+  <p class="sub rv" style="margin-top:4vh">Want to know first? <a class="btn red" style="margin-left:.6em" href="mailto:hello@notbad.games">$ say hello</a></p>
+</section>
 
+<footer>
+  © <span id="yr"></span> not bad — an AI game studio<br>
+  <a href="mailto:hello@notbad.games">hello@notbad.games</a>
+</footer>
+
+<!-- POPUP -->
 <div id="win">
   <div id="winCard">
-    <div class="lvl-tag">LEVEL COMPLETE</div>
-    <h3>not bad.</h3>
-    <p>You finished a website. Imagine what our games feel like.<br>
-      Final score: <span id="finalScore">0</span></p>
+    <div class="tag" id="popTag">SORTED</div>
+    <h3 id="popH">not bad.</h3>
+    <p id="popP"></p>
     <div class="btnrow">
-      <a class="btn red" href="mailto:hello@notbad.games">$ say hello</a>
+      <a class="btn red" id="popMail" href="mailto:hello@notbad.games">$ say hello</a>
       <button class="btn ghost" id="againBtn">↺ play again</button>
     </div>
   </div>
 </div>
 
-<noscript><div style="position:fixed;inset:0;background:#0b0b0d;z-index:99;display:flex;align-items:center;justify-content:center;font-family:monospace;color:#f4f2ee;text-align:center;padding:20px">not bad — a game studio.<br>This website is a game and needs JavaScript to play.</div></noscript>
+<noscript><div style="position:fixed;inset:0;background:#0b0b0d;z-index:99;display:flex;align-items:center;justify-content:center;font-family:monospace;color:#f4f2ee;text-align:center;padding:20px">not bad — a puzzle studio.<br>The playable part needs JavaScript.</div></noscript>
 
 <script>
 "use strict";
-/* ══ not bad — PLAYABLE site. Scroll = gameplay. Vanilla JS, 1 rAF loop, transform-only. ══ */
-
+/* ══ not bad — cycle-sort puzzle (đẩy đỉnh, đáy bật về tay) ══ */
 const $=s=>document.querySelector(s);
-const stage=$("#stage"), world=$("#world"), charEl=$("#char"), charBody=$("#charBody");
-const scoreEl=$("#score b"), lvlHud=$("#lvlHud"), hintEl=$("#hint");
-const winEl=$("#win"), finalScoreEl=$("#finalScore");
 $("#yr").textContent=new Date().getFullYear();
 const REDUCED=matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-/* ── thế giới: các zone xếp ngang, đơn vị vw ── */
-const Z=[ // [width(vw), builder]
-  [100, heroZone],
-  [150, qualityZone],
-  [150, techZone],
-  [150, uxZone],
-  [130, bonusZone],
-  [110, endZone],
-];
-let offs=[], TOTAL=0;
-Z.forEach(z=>{ offs.push(TOTAL); TOTAL+=z[0]; });
-
-function el(cls,html){ const d=document.createElement("div"); d.className=cls; if(html!=null)d.innerHTML=html; return d; }
-function place(zone,node,xvw,bottomvh){ node.style.left=xvw+"vw"; node.style.bottom=bottomvh+"vh"; node.classList.add("prop"); zone.appendChild(node); }
-
-function heroZone(zone){
-  const inner=el("zone-inner",
-    '<div class="lvl-tag">A GAME STUDIO</div>'+
-    '<div id="typed"><span id="typedTxt"></span><span id="cursorBlock"></span></div>'+
-    '<div class="press">THIS WEBSITE IS A GAME — <span class="r">SCROLL TO PLAY</span></div>');
-  zone.appendChild(inner);
-}
-function qualityZone(zone){
-  const inner=el("zone-inner",
-    '<div class="lvl-tag">LEVEL 1 — QUALITY</div>'+
-    '<h2>polish until<br>it shines.</h2>'+
-    '<div class="sub">Every frame, every easing curve, every pixel. We ship when it <b>feels</b> right — and then we polish it <span class="r">one more time</span>.</div>');
-  zone.appendChild(inner);
-  for(let i=0;i<7;i++){ const s=el("star"); s.style.animationDelay=(i*.33)+"s"; place(zone,s,20+i*17,30+((i*13)%22)); }
-  const bug=el("bug"); bug.id="bug1"; place(zone,bug,88,26.5);
-}
-function techZone(zone){
-  const inner=el("zone-inner",
-    '<div class="lvl-tag">LEVEL 2 — TECH</div>'+
-    '<h2>60fps or<br>we do not ship.</h2>'+
-    '<div class="sub">Spine runtimes, WebGL, native builds, weak-GPU profiling on $80 phones. Boring tech talk, <b>buttery results</b>.</div>');
-  zone.appendChild(inner);
-  const chips=["<fun/>","{ 60fps }","spine.render()","0 jank","npm run magic"];
-  chips.forEach((c,i)=>{ const ch=el("chip"+(i===1?" red":""),c); place(zone,ch,52+i*18,28+(i%3)*14); });
-}
-function uxZone(zone){
-  const inner=el("zone-inner",
-    '<div class="lvl-tag">LEVEL 3 — UX</div>'+
-    '<h2>players first.<br>always.</h2>'+
-    '<div class="sub">No dark patterns, no 47-step tutorials. If your thumb has to think, <b>we failed</b>. One tap should feel like a <span class="r">high-five</span>.</div>');
-  zone.appendChild(inner);
-  const btn=el("bigbtn","TAP ME"); btn.id="bigbtn"; place(zone,btn,86,30);
-  btn.addEventListener("pointerdown",()=>{ btn.classList.add("pressed"); burst(innerWidth*.7,innerHeight*.6,18); setTimeout(()=>btn.classList.remove("pressed"),220); });
-}
-function bonusZone(zone){
-  const inner=el("zone-inner",
-    '<div class="lvl-tag">BONUS STAGE — GAMES</div>'+
-    '<h2>now loading…</h2>'+
-    '<div class="shelf">'+
-      '<div class="cart dev"><div class="q">▮</div><span>IN DEVELOPMENT</span></div>'+
-      '<div class="cart"><div class="q">?</div><span>COMING SOON</span></div>'+
-      '<div class="cart"><div class="q">?</div><span>COMING SOON</span></div>'+
-    '</div>');
-  zone.appendChild(inner);
-}
-function endZone(zone){
-  const inner=el("zone-inner",
-    '<div class="lvl-tag">FINAL FLAG</div>'+
-    '<h2>keep scrolling<br>to finish.</h2>');
-  zone.appendChild(inner);
-}
-
-/* dựng world */
-Z.forEach((z,i)=>{ const zone=el("zone"); zone.style.left=offs[i]+"vw"; zone.style.width=z[0]+"vw"; z[1](zone); world.appendChild(zone); });
-world.style.width=TOTAL+"vw";
-
-/* ── typing hero ── */
+/* typing hero */
 const TXT="not bad";
 if(REDUCED){ $("#typedTxt").textContent=TXT; }
 else{ let ti=0; (function type(){ if(ti<=TXT.length){ $("#typedTxt").textContent=TXT.slice(0,ti); ti++; setTimeout(type, ti===1?600:110); } })(); }
 
-/* ── scroll engine ── */
-const vw=()=>innerWidth/100, vh=()=>innerHeight/100;
-let target=0, s=0;             // scroll thô & scroll mượt (px)
-let maxScroll=1;
-function measure(){ maxScroll=document.body.scrollHeight-innerHeight; }
-measure(); addEventListener("resize",measure);
+/* reveal on scroll */
+const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } }),{threshold:.25});
+document.querySelectorAll(".rv").forEach((n,i)=>{ n.style.transitionDelay=(i%4)*0.08+"s"; io.observe(n); });
 
-/* progress p: 0..1 → worldX px. Nhân vật đứng cố định 22vw, world trôi qua. */
-const CHAR_X=()=>22*vw();
-function worldXFor(p){ return p*( (TOTAL-100)*vw() ); }
-
-/* ── nhảy: các mốc theo % tiến trình ── */
-const HOPS=[.12,.2,.3,.37,.44,.52,.585,.65,.72,.8,.88,.95];
-let hopped=new Set(), jump=0, jumpT=0; // jump: 0..1 tiến trình cú nhảy
-const JUMP_DUR=.55, JUMP_H=()=>18*vh();
-
-/* ── particles / confetti (1 canvas) ── */
+/* confetti */
 const cv=$("#fx"), cx=cv.getContext("2d");
 function sizeCanvas(){ const d=Math.min(devicePixelRatio||1,2); cv.width=innerWidth*d; cv.height=innerHeight*d; cx.setTransform(d,0,0,d,0,0); }
 sizeCanvas(); addEventListener("resize",sizeCanvas);
-let parts=[];
+let parts=[], fxOn=false;
 function burst(x,y,n,conf){ if(REDUCED)return;
   for(let i=0;i<n;i++){ const a=Math.random()*Math.PI*2, sp=conf?(4+Math.random()*7):(1.5+Math.random()*3);
     parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-(conf?6:2),g:conf?.25:.18,life:1,dec:.012+Math.random()*.02,
-      c:conf?["#E0312A","#f4f2ee","#ffb54d","#4db6ff"][i%4]:"#E0312A",w:conf?(4+Math.random()*5):3}); } }
-function drawParts(){ if(!parts.length){cx.clearRect(0,0,innerWidth,innerHeight);return;}
-  cx.clearRect(0,0,innerWidth,innerHeight);
+      c:conf?["#E0312A","#f4f2ee","#f0b429","#3fbf62"][i%4]:"#E0312A",w:conf?(4+Math.random()*5):3}); }
+  if(!fxOn){ fxOn=true; requestAnimationFrame(fxLoop); } }
+function fxLoop(){ cx.clearRect(0,0,innerWidth,innerHeight);
   parts=parts.filter(p=>p.life>0);
   parts.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=p.g; p.life-=p.dec;
     cx.globalAlpha=Math.max(p.life,0); cx.fillStyle=p.c; cx.fillRect(p.x,p.y,p.w,p.w); });
-  cx.globalAlpha=1; }
+  cx.globalAlpha=1;
+  if(parts.length) requestAnimationFrame(fxLoop); else { fxOn=false; cx.clearRect(0,0,innerWidth,innerHeight); } }
 
-/* ── vòng lặp chính ── */
-const LVLNAMES=["TITLE SCREEN","LEVEL 1 — QUALITY","LEVEL 2 — TECH","LEVEL 3 — UX","BONUS STAGE","FINAL FLAG"];
-let won=false, lastS=0;
-function loop(){
-  requestAnimationFrame(loop);
-  target=scrollY;
-  s+=(target-s)*(REDUCED?1:.09);                    // lerp mượt
-  const p=Math.min(s/maxScroll,1);
-  const wx=worldXFor(p);
-  world.style.transform="translate3d("+(-wx)+"px,0,0)";
+/* SFX synth */
+let _ac=null;
+function ac(){ if(!_ac){ try{ _ac=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){return null} } if(_ac&&_ac.state==="suspended")_ac.resume(); return _ac; }
+function tick(f1,f2,dur,vol){ const c=ac(); if(!c||REDUCED)return; const o=c.createOscillator(),g=c.createGain();
+  o.type="sine"; o.frequency.setValueAtTime(f1,c.currentTime); o.frequency.exponentialRampToValueAtTime(f2,c.currentTime+dur);
+  g.gain.setValueAtTime(vol,c.currentTime); g.gain.exponentialRampToValueAtTime(.001,c.currentTime+dur);
+  o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+dur+.02); }
+const sPush=()=>tick(340,460,.08,.09), sPop=()=>tick(460,240,.11,.1), sReveal=()=>tick(520,780,.16,.09),
+      sWin=()=>{tick(440,660,.18,.1);setTimeout(()=>tick(560,880,.22,.1),150);}, sLose=()=>tick(220,90,.4,.12),
+      sSink=()=>tick(280,120,.3,.09);
 
-  /* HUD */
-  const sc=Math.floor(p*999999);
-  scoreEl.textContent=String(sc).padStart(6,"0");
-  const cxw=p*(TOTAL-100)+22;                       // vị trí nhân vật trong world (vw)
-  let zi=0; for(let i=0;i<offs.length;i++){ if(cxw>=offs[i]) zi=i; }
-  lvlHud.textContent=LVLNAMES[zi];
-  hintEl.style.opacity=p>.02?0:"";
-  if(p<.02&&hopped.size) hopped.clear();            // kéo về đầu thì chơi lại được các cú nhảy
+/* ── LEVEL 1 (đã solve tay + solver) ──
+   Mỗi viên: {c:"G|R|W|X", hid:bool}. Mảng cột: index 0 = ĐỈNH. */
+const LEVEL={
+  limit:17, hand:{c:"G",hid:false},
+  cols:[
+    [{c:"G"},{c:"G"},{c:"W"},{c:"R"},{c:"X"},{c:"R"}],
+    [{c:"W"},{c:"R"},{c:"W"},{c:"W"},{c:"R"},{c:"R"}],
+    [{c:"W",hid:true},{c:"G",hid:true},{c:"W"},{c:"G"},{c:"G"},{c:"R"}],
+  ],
+};
+const boardEl=$("#board"), handEl=$("#handTile"), mvEl=$("#mv"), hudEl=$("#hud");
+let cols=[], hand=null, left=0, over=false, busy=false;
 
-  /* nhảy theo mốc */
-  HOPS.forEach((h,i)=>{ if(p>=h&&!hopped.has(i)){ hopped.add(i); jumpT=performance.now(); jump=1;
-    burst(CHAR_X()+30, innerHeight-26*vh(), 8); } });
-  let dy=0, sq=1;
-  if(jump>0){ const t=(performance.now()-jumpT)/1000/JUMP_DUR;
-    if(t>=1){ jump=0; burst(CHAR_X()+30, innerHeight-26*vh(), 6); sq=.82; }
-    else{ dy=-4*JUMP_H()*t*(1-t); sq=1+Math.sin(t*Math.PI)*.12; } }
-  const vel=s-lastS; lastS=s;
-  const tilt=Math.max(-10,Math.min(10,vel*.15));
-  charEl.style.transform="translate3d(0,"+dy+"px,0) rotate("+tilt+"deg)";
-  charBody.style.transform="scaleY("+sq+") scaleX("+(2-sq)+")";
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function reset(){ cols=clone(LEVEL.cols); hand=clone(LEVEL.hand); left=LEVEL.limit; over=false; busy=false; render(); }
 
-  /* đè bẹp con bug ở level 1 */
-  const bug=$("#bug1"); if(bug&&!bug.classList.contains("dead")&&p>.31){ bug.classList.add("dead"); burst(innerWidth*.6,innerHeight*.68,14); }
-  /* nút to ở level UX tự bị "dẫm" */
-  const bb=$("#bigbtn"); if(bb){ const on=p>.62&&p<.665; bb.classList.toggle("pressed",on); }
-
-  /* thắng */
-  if(p>=.985&&!won){ won=true; finalScoreEl.textContent=String(sc).padStart(6,"0");
-    winEl.classList.add("show");
-    for(let k=0;k<5;k++) setTimeout(()=>burst(innerWidth*(0.2+Math.random()*0.6), innerHeight*0.25, 40, true), k*180); }
-  if(p<.9&&won){ won=false; winEl.classList.remove("show"); }
-
-  drawParts();
+function pureCol(col){ // WIN CHẶT: cột phải đầy 6 viên MÀU THẬT thuần nhất — không wild, không viên ẩn.
+  // (⇒ lúc thắng wild bắt buộc nằm trên tay)
+  return col.length>0&&col.every(x=>!x.hid&&x.c!=="X"&&x.c===col[0].c);
 }
-loop();
+function isWin(){ return cols.every(pureCol); }
 
-$("#againBtn").addEventListener("click",()=>{ winEl.classList.remove("show"); won=false; hopped.clear(); scrollTo({top:0,behavior:REDUCED?"auto":"smooth"}); });
+function tileHTML(t){
+  if(t.hid) return '<div class="shellL"></div><div class="shellR"></div><div class="shellQ">?</div>';
+  if(t.c==="X") return '<div class="star">★</div>';
+  return "";
+}
+function tileClass(t){ return "tile "+(t.hid?"hid":("c"+t.c)); }
 
-/* click/tap nhân vật: nhảy chơi cho vui */
-charEl.style.pointerEvents="auto";
-charEl.addEventListener("pointerdown",()=>{ if(jump===0){ jumpT=performance.now(); jump=1; } });
+function render(newTopCol){
+  boardEl.innerHTML="";
+  cols.forEach(function(col,ci){
+    const cEl=document.createElement("div");
+    cEl.className="col"+(pureCol(col)?" done":"")+((over||busy)?" locked":"");
+    col.forEach(function(t,i){
+      const tl=document.createElement("div");
+      tl.className=tileClass(t)+((ci===newTopCol&&i===0)?" drop":"");
+      tl.innerHTML=tileHTML(t);
+      cEl.appendChild(tl);
+    });
+    cEl.addEventListener("pointerdown",function(){ move(ci); });
+    boardEl.appendChild(cEl);
+  });
+  handEl.className=tileClass(hand)+" pop";
+  handEl.innerHTML=tileHTML(hand);
+  mvEl.textContent=left;
+  hudEl.classList.toggle("low",left<=3&&!over);
+}
+
+/* viên bay bằng WAAPI clone; delay: clone đứng chờ tại chỗ rồi mới bay */
+function fly(fromRect,toRect,t,cb,delay){
+  const c=document.createElement("div");
+  c.className=tileClass(t)+" fly"; c.innerHTML=tileHTML(t);
+  c.style.width=fromRect.width+"px"; c.style.height=fromRect.height+"px";
+  c.style.left=fromRect.left+"px"; c.style.top=fromRect.top+"px";
+  document.body.appendChild(c);
+  if(REDUCED){ c.remove(); cb&&cb(); return; }
+  const dx=toRect.left-fromRect.left, dy=toRect.top-fromRect.top;
+  function go(){
+    c.animate([{transform:"translate(0,0) scale(1)"},{transform:"translate("+dx*.5+"px,"+(dy*.5-46)+"px) scale(1.08)"},{transform:"translate("+dx+"px,"+dy+"px) scale(1)"}],
+      {duration:330,easing:"cubic-bezier(.3,.7,.3,1)"}).onfinish=function(){ c.remove(); cb&&cb(); };
+  }
+  if(delay) setTimeout(go,delay); else go();
+}
+
+/* đẩy cả cột xuống 1 nấc trong 0.3s (FLIP: sau render mọi viên đã ở vị trí mới,
+   cho các viên cũ chạy từ -step về 0; viên đỉnh mới dùng anim drop riêng) */
+function pushDown(ci){
+  if(REDUCED) return;
+  const cEl=boardEl.children[ci];
+  if(!cEl||cEl.children.length<2) return;
+  const step=cEl.children[0].getBoundingClientRect().height+6; // 6 = gap
+  // TẤT CẢ viên (kể cả viên mới ở đỉnh — vừa đáp ở vị trí cao hơn 1 nấc) cùng dồn xuống
+  for(let i=0;i<cEl.children.length;i++){
+    cEl.children[i].animate(
+      [{transform:"translateY("+(-step)+"px)"},{transform:"translateY(0)"}],
+      {duration:300,easing:"cubic-bezier(.3,.8,.3,1)"});
+  }
+}
+
+/* WILD SINK: wild tự lặn xuống đáy KHI VÀ CHỈ KHI cột của nó toàn viên (đã lộ)
+   cùng màu nhau VÀ cùng màu với viên in-hand. Không tốn nước. */
+function applySinkState(){
+  const sinks=[];
+  cols.forEach(function(col,ci){
+    const wi=col.findIndex(x=>x.c==="X");
+    if(wi<0||wi===col.length-1) return;
+    const others=col.filter(x=>x.c!=="X");
+    if(!others.length) return;
+    if(others.every(x=>!x.hid&&x.c===hand.c&&x.c===others[0].c)){
+      col.splice(wi,1); col.push({c:"X"});
+      sinks.push({ci:ci,wi:wi});
+    }
+  });
+  return sinks;
+}
+function animateSink(ci,wi){ // FLIP sau render: các viên dưới wild trồi lên 1 nấc, wild tụt xuống đáy
+  if(REDUCED) return;
+  const cEl=boardEl.children[ci];
+  if(!cEl||!cEl.children.length) return;
+  const step=cEl.children[0].getBoundingClientRect().height+6;
+  const last=cEl.children.length-1;
+  for(let i=wi;i<last;i++){
+    cEl.children[i].animate([{transform:"translateY("+step+"px)"},{transform:"translateY(0)"}],
+      {duration:380,easing:"cubic-bezier(.3,.8,.3,1)"});
+  }
+  cEl.children[last].animate([{transform:"translateY("+(-(last-wi)*step)+"px)"},{transform:"translateY(0)"}],
+    {duration:420,easing:"cubic-bezier(.4,.6,.3,1)"});
+}
+
+function move(ci){
+  if(over||busy) return;
+  busy=true; sPush();                       // block input từ lúc click tới khi xong lượt
+  const colEl=boardEl.children[ci];
+  const handRect=handEl.getBoundingClientRect();
+  const topRect0=colEl.children[0]?colEl.children[0].getBoundingClientRect():colEl.getBoundingClientRect();
+  const stepPx=topRect0.height+6;
+  // đích bay = PHÍA TRÊN viên top hiện tại 1 nấc (chỗ viên mới sẽ đứng trước khi cả cột dồn xuống)
+  const topRect={left:topRect0.left,top:topRect0.top-stepPx,width:topRect0.width,height:topRect0.height};
+  const botEl=colEl.children[colEl.children.length-1];
+  const botRect=botEl?botEl.getBoundingClientRect():colEl.getBoundingClientRect();
+  const flyIn=clone(hand);
+  // logic
+  cols[ci].unshift(hand);
+  const popped=cols[ci].pop();
+  const wasHid=!!popped.hid;
+  hand=popped; left--;
+  // anim: tay → đỉnh cột → cột dồn xuống 0.3s → viên đáy bật ra bay về tay
+  handEl.style.visibility="hidden";
+  fly(handRect,topRect,flyIn,function(){
+    render(); handEl.style.visibility="hidden";   // không dùng .drop — viên mới đi cùng nhịp dồn cột
+    pushDown(ci);
+    // viên đáy đứng tại chỗ 0.22s (đang bị cột đè xuống) rồi mới bật ra bay về tay
+    fly(botRect,handRect,wasHid?{c:"?",hid:true}:hand,function(){
+      handEl.style.visibility="";
+      if(wasHid){ hand.hid=false; render(); handEl.classList.add("hid","reveal");
+        handEl.innerHTML=tileHTML({hid:true}); // vỏ để tách
+        setTimeout(function(){ sReveal(); handEl.className=tileClass(hand)+" pop"; handEl.innerHTML=tileHTML(hand);
+          const r=handEl.getBoundingClientRect(); burst(r.left+r.width/2,r.top+r.height/2,10); finish(); },420);
+        // giữ vỏ hé màu thật phía dưới
+        handEl.className="tile c"+hand.c+" hid reveal";
+      } else { sPop(); render(); finish(); }
+    },220);
+  });
+  function finish(){
+    busy=false;
+    const sinks=applySinkState();           // wild lặn (nếu đủ điều kiện) — không tốn nước
+    if(isWin()){ over=true; winFx(); render(); return; }
+    if(left<=0){ over=true; loseFx(); render(); return; }
+    render();
+    if(sinks.length){ sSink(); sinks.forEach(function(s){ animateSink(s.ci,s.wi); }); }
+  }
+}
+
+function popup(tag,h,p,mail){ $("#popTag").textContent=tag; $("#popH").textContent=h; $("#popP").innerHTML=p;
+  $("#popMail").style.display=mail?"":"none"; $("#win").classList.add("show"); }
+function winFx(){ sWin();
+  const r=boardEl.getBoundingClientRect();
+  for(let k=0;k<5;k++) setTimeout(()=>burst(r.left+Math.random()*r.width, r.top+r.height*.3, 36, true), k*160);
+  setTimeout(()=>popup("SORTED","not bad.","You finished with <b style='color:var(--red)'>"+left+"</b> moves to spare.<br>Imagine a whole game that feels like this.",true), 900);
+}
+function loseFx(){ sLose();
+  setTimeout(()=>popup("OUT OF MOVES","not great,\nnot terrible.","The blocks won this round. They are, after all, professionally made.",false), 500);
+}
+$("#retryBtn").addEventListener("click",function(){ $("#win").classList.remove("show"); reset(); });
+$("#againBtn").addEventListener("click",function(){ $("#win").classList.remove("show"); reset();
+  document.getElementById("play").scrollIntoView({behavior:REDUCED?"auto":"smooth"}); });
+reset();
 </script>
 </body>
 </html>

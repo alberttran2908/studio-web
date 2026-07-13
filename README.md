@@ -1,6 +1,6 @@
 # not bad — studio website
 
-Website "PLAYABLE": cả trang là một game — cuộn trang = điều khiển con trỏ đỏ chạy qua các level (Quality / Tech / UX), về đích thì LEVEL COMPLETE + confetti + contact.
+Website "PLAYABLE": danh thiếp của studio là một **sort puzzle chơi được thật** — các tile con trỏ (đỏ chớp mắt) xếp theo luật water-sort: 4 màu × 4 tile, 2 cột trống, gom cùng màu về một cột. Thắng → confetti + popup contact. Có undo, new deal, SFX synth WebAudio, đếm moves. Deal ngẫu nhiên đã được verify luôn giải được (BFS solver, 20/20).
 
 - 1 file `index.html`, **không build, không framework** — vanilla JS, 1 vòng rAF, chỉ animate transform/opacity.
 - Font: JetBrains Mono (Google Fonts). Màu brand: đỏ `#E0312A` / đen `#0b0b0d`.
