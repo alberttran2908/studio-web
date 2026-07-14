@@ -20,15 +20,25 @@
     --tile:clamp(44px,8vw,66px);
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
+  /* CRT scanlines — chất telemetry, rất nhẹ */
+  body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:70;
+    background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.10) 2px 4px)}
+  :focus-visible{outline:2px solid var(--red);outline-offset:3px}
   body{background:var(--bg);color:var(--ink);font-family:var(--mono);overflow-x:hidden}
   ::selection{background:var(--red);color:white}
   #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:30}
 
-  section{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:7vh 6vw;position:relative}
-  #hero{min-height:100vh} /* riêng title screen giữ full màn */
-  .tag{display:inline-block;color:var(--red);border:2px solid var(--red);padding:.3em .9em;border-radius:.6em;font-weight:700;font-size:clamp(11px,1.3vw,14px);letter-spacing:.18em}
-  h1,h2{font-weight:800;line-height:1.03;letter-spacing:-.02em;text-align:center}
-  h2{font-size:clamp(34px,7vw,96px)}
+  section{min-height:70dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9vh 6vw 7vh;position:relative;border-top:1px solid var(--line)}
+  #hero{min-height:100dvh;border-top:none}
+  /* thanh metadata kỹ thuật đầu mỗi section */
+  .secmeta{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;padding:10px 14px;
+    color:#4a4a55;font-size:10px;letter-spacing:.22em;font-weight:700;pointer-events:none}
+  .secmeta i{font-style:normal;color:#33333b}
+  .tag{display:inline-block;color:var(--red);border:1px solid var(--red);padding:.35em 1em;border-radius:0;font-weight:700;font-size:clamp(11px,1.3vw,14px);letter-spacing:.18em}
+  .tag:before{content:"[ "} .tag:after{content:" ]"}
+  h1,h2{font-weight:800;line-height:.94;letter-spacing:-.045em;text-align:center;text-wrap:balance}
+  h2{font-size:clamp(38px,8.5vw,118px)}
   .sub{color:var(--dim);font-size:clamp(13px,1.6vw,17px);line-height:1.7;text-align:center;max-width:38em}
   .sub b{color:var(--ink)} .sub .r{color:var(--red);font-weight:700}
 
@@ -50,7 +60,7 @@
   #hud b{color:var(--grn)} #hud.low b{color:var(--red);animation:pulse 1s infinite}
   #board{display:flex;gap:clamp(12px,2.4vw,24px)}
   .col{width:calc(var(--tile) + 14px);flex:none;display:flex;flex-direction:column;gap:6px;padding:8px 5px;cursor:pointer;position:relative;
-    border:2px solid var(--line);border-top:none;border-radius:0 0 14px 14px;transition:border-color .2s}
+    border:1px solid var(--line);border-top:none;border-radius:0;transition:border-color .2s}
   /* inner cột = 14px (padding 5×2 + border 2×2) → tile trong cột = đúng var(--tile), không bị bóp */
   .col:hover{border-color:#3a3a42}
   .col.done{border-color:var(--gold)}
@@ -88,7 +98,7 @@
 
   /* tay cầm */
   #handWrap{display:flex;flex-direction:column;align-items:center;gap:8px}
-  #handSlot{width:calc(var(--tile) + 20px);padding:8px;border:2px dashed #3a3a42;border-radius:16px}
+  #handSlot{width:calc(var(--tile) + 20px);padding:8px;border:1px dashed #3a3a42;border-radius:0}
   /* inner slot = 20px (padding 8×2 + border 2×2) → tile trên tay = var(--tile), khớp tile trong cột */
   #handLabel{color:var(--dim);font-size:11px;letter-spacing:.3em;font-weight:700}
   #handTile.pop{animation:handPop .25s cubic-bezier(.2,1.5,.4,1)}
@@ -98,35 +108,39 @@
   .fly{position:fixed;z-index:50;pointer-events:none;margin:0}
 
   #pzBtns{display:flex;gap:12px}
-  .btn{font-family:var(--mono);font-weight:700;font-size:clamp(12px,1.5vw,15px);padding:.8em 1.4em;border-radius:12px;cursor:pointer;border:none;text-decoration:none;display:inline-block;letter-spacing:.06em}
-  .btn.red{background:var(--red);color:white;border-bottom:5px solid var(--red-d)}
-  .btn.ghost{background:transparent;color:var(--dim);border:2px solid var(--line)}
+  .btn{font-family:var(--mono);font-weight:700;font-size:clamp(12px,1.5vw,15px);padding:.8em 1.4em;border-radius:0;cursor:pointer;border:none;text-decoration:none;display:inline-block;letter-spacing:.06em;transition:background .18s,color .18s,border-color .18s,transform .12s}
+  .btn.red{background:var(--red);color:white;border-bottom:4px solid var(--red-d)}
+  .btn.red:hover{background:#f13d33}
+  .btn.ghost{background:transparent;color:var(--dim);border:1px solid var(--line)}
+  .btn.ghost:hover{color:var(--ink);border-color:var(--ink)}
   .btn:active{transform:translateY(2px)}
 
   /* ── MANIFESTO ── */
-  .mline{font-size:clamp(30px,6.5vw,84px);font-weight:800;letter-spacing:-.02em;line-height:1.15;text-align:center}
+  .mline{font-size:clamp(34px,8vw,108px);font-weight:800;letter-spacing:-.045em;line-height:1;text-align:center;text-wrap:balance}
   .mline .r{color:var(--red)}
   .msub{margin-top:4em}
 
   /* ── GAMES ── */
   .shelf{display:flex;gap:2.2vw;margin-top:5vh;flex-wrap:wrap;justify-content:center}
-  .cart{width:clamp(150px,19vw,240px);aspect-ratio:3/4;border-radius:16px;border:2px dashed #33333b;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9em;color:var(--dim);transition:transform .25s}
-  .cart:hover{transform:translateY(-8px) rotate(-1.5deg)}
+  .cart{width:clamp(150px,19vw,240px);aspect-ratio:3/4;border-radius:0;border:1px dashed #33333b;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9em;color:var(--dim);transition:transform .25s,border-color .25s;position:relative}
+  .cart:hover{transform:translateY(-8px);border-color:var(--dim)}
+  .cart:before{content:"+";position:absolute;top:2px;left:6px;color:#33333b;font-weight:700}
+  .cart:after{content:"+";position:absolute;bottom:2px;right:6px;color:#33333b;font-weight:700}
   .cart .q{font-size:clamp(30px,4.5vw,54px);font-weight:800;color:#3c3c45}
   .cart span{font-size:clamp(10px,1.3vw,13px);letter-spacing:.2em}
   .cart.dev{border-style:solid;border-color:var(--red)}
   .cart.dev .q{color:var(--red);animation:curBlink 1s steps(1) infinite}
   a.cart{text-decoration:none}
-  .cart.live{border-style:solid;border-color:var(--grn);color:var(--ink)}
-  .cart.live .q{color:var(--grn)}
+  .cart.live{border-style:solid;border-color:var(--ink);color:var(--ink)}
+  .cart.live .q{color:var(--red)}
   .cart .mini{color:var(--dim);font-size:clamp(9px,1vw,11px);letter-spacing:.12em;text-align:center;padding:0 10px}
 
   /* ── POPUP ── */
   #win{position:fixed;inset:0;z-index:40;display:flex;align-items:center;justify-content:center;
     background:rgba(5,5,8,.78);opacity:0;pointer-events:none;transition:opacity .5s}
   #win.show{opacity:1;pointer-events:auto}
-  #winCard{background:var(--panel);border:2px solid #2a2a31;border-radius:22px;padding:clamp(24px,4vw,48px);
+  #winCard{background:var(--panel);border:1px solid #2a2a31;border-radius:0;padding:clamp(24px,4vw,48px);
     text-align:center;max-width:min(92vw,520px);transform:scale(.8);transition:transform .5s cubic-bezier(.2,1.6,.4,1)}
   #win.show #winCard{transform:scale(1)}
   #winCard .tag{margin-bottom:1em}
@@ -157,6 +171,7 @@
 
 <!-- PUZZLE -->
 <section id="play">
+  <div class="secmeta"><span>SYS.01 // PLAYABLE</span><i>+</i></div>
   <div class="tag rv">OUR BUSINESS CARD IS PLAYABLE</div>
   <h2 class="rv" style="margin-top:.6em">sort it out.</h2>
   <p class="sub rv" style="margin-top:1.2em">Tap a column — your block lands on <b>top</b>, the <b>bottom</b> one pops back to your hand.<br>One color per column — the ★ ends up in your hand. <span class="r">17 moves</span>. That is the whole tutorial — as it should be.</p>
@@ -175,6 +190,7 @@
 
 <!-- MANIFESTO -->
 <section id="manifesto">
+  <div class="secmeta"><span>SYS.02 // MANIFESTO</span><i>+</i></div>
   <div class="mline rv">quiet games<br>for <span class="r">loud days</span>.</div>
   <div class="mline rv" style="font-size:clamp(18px,3vw,34px);color:var(--dim);font-weight:700">one thumb · zero tutorials · nothing yelling at you</div>
   <p class="sub rv msub">We make games, <b>technically</b>. What we really build is a small good memory for a stranger <span class="r">somewhere in the world</span> — and if it is not worth remembering, it does not ship.</p>
@@ -182,6 +198,7 @@
 
 <!-- QUALITY -->
 <section id="quality">
+  <div class="secmeta"><span>SYS.03 // QC-PASS</span><i>+</i></div>
   <div class="tag rv">QUALITY</div>
   <h2 class="rv" style="margin-top:.6em">polish until<br>it shines.</h2>
   <p class="sub rv" style="margin-top:1.2em">Every frame, every easing curve, every pixel. We ship when it <b>feels</b> right — and then we polish it <span class="r">one more time</span>.</p>
@@ -189,6 +206,7 @@
 
 <!-- GAMES -->
 <section id="games">
+  <div class="secmeta"><span>SYS.04 // CARTRIDGES</span><i>+</i></div>
   <div class="tag rv">NOW LOADING</div>
   <h2 class="rv" style="margin-top:.6em">the games.</h2>
   <div class="shelf rv">
@@ -202,8 +220,8 @@
 </section>
 
 <footer>
-  © <span id="yr"></span> not bad — an AI game studio<br>
-  <a href="mailto:hello@notbad.games">hello@notbad.games</a>
+  <span style="letter-spacing:.25em">NOT BAD ® EST <span id="yr"></span> · REV 1.7 · UNIT / NB-01</span><br>
+  an AI game studio · <a href="mailto:hello@notbad.games">hello@notbad.games</a>
 </footer>
 
 <!-- POPUP -->
