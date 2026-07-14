@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>not bad — an AI game studio</title>
-<meta name="description" content="not bad is an AI game studio. Doing games, unreasonable polish. Our games are not unfun — play one right here.">
-<meta property="og:title" content="not bad — an AI game studio">
+<title>not bad · an AI game studio</title>
+<meta name="description" content="not bad is an AI game studio. Doing games, unreasonable polish. Our games are not unfun. Play one right here.">
+<meta property="og:title" content="not bad · an AI game studio">
 <meta property="og:description" content="Our business card is playable. Sort it out.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23E0312A'/%3E%3Crect x='22' y='18' width='20' height='28' rx='4' fill='white'/%3E%3C/svg%3E">
@@ -26,11 +26,12 @@
     background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.10) 2px 4px)}
   :focus-visible{outline:2px solid var(--red);outline-offset:3px}
   body{background:var(--bg);color:var(--ink);font-family:var(--mono);overflow-x:hidden}
-  ::selection{background:var(--red);color:white}
+  ::selection{background:var(--red);color:var(--ink)}
   #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:30}
 
   section{min-height:70dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:9vh 6vw 7vh;position:relative;border-top:1px solid var(--line)}
-  #hero{min-height:100dvh;border-top:none}
+  #hero{min-height:100dvh;border-top:none;align-items:flex-start;padding-left:clamp(24px,9vw,150px)}
+  #hero .heroLine{text-align:left}
   /* thanh metadata kỹ thuật đầu mỗi section */
   .secmeta{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;padding:10px 14px;
     color:#4a4a55;font-size:10px;letter-spacing:.22em;font-weight:700;pointer-events:none}
@@ -51,7 +52,6 @@
   @keyframes curBlink{0%,60%{opacity:1}61%,100%{opacity:.15}}
   .heroLine{margin-top:2em;color:var(--dim);letter-spacing:.08em;font-size:clamp(12px,1.7vw,17px);text-align:center;line-height:1.8}
   .heroLine .r{color:var(--red);font-weight:700}
-  #scrollHint{position:absolute;bottom:4vh;left:50%;transform:translateX(-50%);color:var(--dim);font-size:12px;letter-spacing:.3em;animation:pulse 1.6s ease-in-out infinite}
   @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
 
   /* ── PUZZLE ── */
@@ -109,7 +109,7 @@
 
   #pzBtns{display:flex;gap:12px}
   .btn{font-family:var(--mono);font-weight:700;font-size:clamp(12px,1.5vw,15px);padding:.8em 1.4em;border-radius:0;cursor:pointer;border:none;text-decoration:none;display:inline-block;letter-spacing:.06em;transition:background .18s,color .18s,border-color .18s,transform .12s}
-  .btn.red{background:var(--red);color:white;border-bottom:4px solid var(--red-d)}
+  .btn.red{background:var(--red);color:var(--ink);border-bottom:4px solid var(--red-d)}
   .btn.red:hover{background:#f13d33}
   .btn.ghost{background:transparent;color:var(--dim);border:1px solid var(--line)}
   .btn.ghost:hover{color:var(--ink);border-color:var(--ink)}
@@ -125,14 +125,14 @@
   .cart{width:clamp(150px,19vw,240px);aspect-ratio:3/4;border-radius:0;border:1px dashed #33333b;
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.9em;color:var(--dim);transition:transform .25s,border-color .25s;position:relative}
   .cart:hover{transform:translateY(-8px);border-color:var(--dim)}
-  .cart:before{content:"+";position:absolute;top:2px;left:6px;color:#33333b;font-weight:700}
-  .cart:after{content:"+";position:absolute;bottom:2px;right:6px;color:#33333b;font-weight:700}
+
   .cart .q{font-size:clamp(30px,4.5vw,54px);font-weight:800;color:#3c3c45}
   .cart span{font-size:clamp(10px,1.3vw,13px);letter-spacing:.2em}
   .cart.dev{border-style:solid;border-color:var(--red)}
   .cart.dev .q{color:var(--red);animation:curBlink 1s steps(1) infinite}
   a.cart{text-decoration:none}
-  .cart.live{border-style:solid;border-color:var(--ink);color:var(--ink)}
+  .cart.live{border-style:solid;border-color:var(--ink);color:var(--ink);width:clamp(200px,26vw,320px)}
+  .shelf{align-items:flex-end}
   .cart.live .q{color:var(--red)}
   .cart .mini{color:var(--dim);font-size:clamp(9px,1vw,11px);letter-spacing:.12em;text-align:center;padding:0 10px}
 
@@ -166,15 +166,15 @@
   <div class="tag rv">AN AI GAME STUDIO</div>
   <div id="typed" style="margin-top:.6em"><span id="typedTxt"></span><span id="cursorBlock"></span></div>
   <div class="heroLine rv">doing games · unreasonable polish<br>our games are <span class="r">not unfun</span></div>
-  <div id="scrollHint">▼</div>
+  <a class="btn red rv" href="#play" style="margin-top:2.6em">$ play our business card</a>
 </section>
 
 <!-- PUZZLE -->
 <section id="play">
-  <div class="secmeta"><span>SYS.01 // PLAYABLE</span><i>+</i></div>
+  <div class="secmeta"><span>SYS.01 // PLAYABLE</span></div>
   <div class="tag rv">OUR BUSINESS CARD IS PLAYABLE</div>
   <h2 class="rv" style="margin-top:.6em">sort it out.</h2>
-  <p class="sub rv" style="margin-top:1.2em">Tap a column — your block lands on <b>top</b>, the <b>bottom</b> one pops back to your hand.<br>One color per column — the ★ ends up in your hand. <span class="r">17 moves</span>. That is the whole tutorial — as it should be.</p>
+  <p class="sub rv" style="margin-top:1.2em">Tap a column: your block lands on <b>top</b>, the <b>bottom</b> one pops back to your hand.<br>One color per column, the ★ ends in your hand, <span class="r">17 moves</span>. That is the whole tutorial.</p>
   <div id="puzzleWrap" class="rv">
     <div id="hud"><span>MOVES LEFT <b id="mv">17</b></span></div>
     <div id="board"></div>
@@ -190,25 +190,23 @@
 
 <!-- MANIFESTO -->
 <section id="manifesto">
-  <div class="secmeta"><span>SYS.02 // MANIFESTO</span><i>+</i></div>
+  <div class="secmeta"><span>SYS.02 // MANIFESTO</span></div>
   <div class="mline rv">quiet games<br>for <span class="r">loud days</span>.</div>
   <div class="mline rv" style="font-size:clamp(18px,3vw,34px);color:var(--dim);font-weight:700">one thumb · zero tutorials · nothing yelling at you</div>
-  <p class="sub rv msub">We make games, <b>technically</b>. What we really build is a small good memory for a stranger <span class="r">somewhere in the world</span> — and if it is not worth remembering, it does not ship.</p>
+  <p class="sub rv msub">We make games, <b>technically</b>. What we really build is a small good memory for a stranger <span class="r">somewhere in the world</span>. If it is not worth remembering, it does not ship.</p>
 </section>
 
 <!-- QUALITY -->
-<section id="quality">
-  <div class="secmeta"><span>SYS.03 // QC-PASS</span><i>+</i></div>
-  <div class="tag rv">QUALITY</div>
-  <h2 class="rv" style="margin-top:.6em">polish until<br>it shines.</h2>
-  <p class="sub rv" style="margin-top:1.2em">Every frame, every easing curve, every pixel. We ship when it <b>feels</b> right — and then we polish it <span class="r">one more time</span>.</p>
+<section id="quality" style="align-items:flex-end;text-align:right">
+  <div class="secmeta"><span>SYS.03 // QC-PASS</span></div>
+  <h2 class="rv" style="text-align:right">polish until<br>it shines.</h2>
+  <p class="sub rv" style="margin-top:1.2em;text-align:right">Every frame, every easing curve, every pixel. We ship when it <b>feels</b> right. Then we polish it <span class="r">one more time</span>.</p>
 </section>
 
 <!-- GAMES -->
 <section id="games">
-  <div class="secmeta"><span>SYS.04 // CARTRIDGES</span><i>+</i></div>
-  <div class="tag rv">NOW LOADING</div>
-  <h2 class="rv" style="margin-top:.6em">the games.</h2>
+  <div class="secmeta"><span>SYS.04 // CARTRIDGES</span></div>
+  <h2 class="rv">the games.</h2>
   <div class="shelf rv">
     <a class="cart live" href="https://apps.apple.com/sg/app/sortino-domino-wood-puzzle/id6787122842" target="_blank" rel="noopener">
       <div class="q">S</div><span>SORTINO</span><span class="mini">DOMINO WOOD PUZZLE · APP STORE ↗</span>
@@ -220,7 +218,7 @@
 </section>
 
 <footer>
-  <span style="letter-spacing:.25em">NOT BAD ® EST <span id="yr"></span> · REV 1.7 · UNIT / NB-01</span><br>
+  <span style="letter-spacing:.25em">NOT BAD ® EST <span id="yr"></span></span><br>
   an AI game studio · <a href="mailto:hello@notbad.games">hello@notbad.games</a>
 </footer>
 
@@ -237,7 +235,7 @@
   </div>
 </div>
 
-<noscript><div style="position:fixed;inset:0;background:#0b0b0d;z-index:99;display:flex;align-items:center;justify-content:center;font-family:monospace;color:#f4f2ee;text-align:center;padding:20px">not bad — a puzzle studio.<br>The playable part needs JavaScript.</div></noscript>
+<noscript><div style="position:fixed;inset:0;background:#0b0b0d;z-index:99;display:flex;align-items:center;justify-content:center;font-family:monospace;color:#f4f2ee;text-align:center;padding:20px">not bad · an AI game studio.<br>The playable part needs JavaScript.</div></noscript>
 
 <script>
 "use strict";
